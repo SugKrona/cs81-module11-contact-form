@@ -10,6 +10,7 @@ function ContactForm() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
+  const [ticketNumber, setTicketNumber] = useState(null); // NEW: State for ticket number
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +24,7 @@ function ContactForm() {
     const phoneRegex = /^\d{10}$/;
     if (!formData.phone.trim()) {
       newErrors.phone = 'Phone number is required';
-    } else if (!phoneRegex.test(formData.phone.trim())) {
+    } else if (!phoneRegex.test(formData.phone.trim().replace(/\D/g, ''))) {
       newErrors.phone = 'Invalid phone number (10 digits only)';
     }
     if (!formData.message.trim()) newErrors.message = 'Message is required';
@@ -34,9 +35,11 @@ function ContactForm() {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
+      const newTicketNumber = Math.floor(100000 + Math.random() * 900000); // Generate a random 6-digit number
+      setTicketNumber(newTicketNumber); // Store the new ticket number in state
       setSubmitted(true);
-      setFormData({ name: '', email: '', phone: '', message: '' }); // Clear form
-      setErrors({}); // Clear errors
+      setFormData({ name: '', email: '', phone: '', message: '' });
+      setErrors({});
     } else {
       setErrors(validationErrors);
     }
@@ -44,31 +47,32 @@ function ContactForm() {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)', backgroundColor: 'white', fontFamily: 'Arial, sans-serif' }}>
-      <h2>Submit a Ticket</h2>
+      <h2>Submit a Support Request</h2>
       {submitted ? (
         <div style={{ textAlign: 'center', padding: '20px', color: '#007bff' }}>
           <h3>Thank you for contacting TripleByte Studio support!</h3>
+          <p>Your ticket number is: <strong>#{ticketNumber}</strong></p>
           <p>We will get back to you within 24 hours.</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
           <label>Name: <br />
-            <input type="text" name="name" value={formData.name} onChange={handleChange} style={{ width: 'calc(100% - 10px)', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px' }} />
+            <input type="text" name="name" value={formData.name} onChange={handleChange} style={{ width: '100%', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }} />
             {errors.name && <p style={{ color: 'red', margin: '0 0 10px 0', fontSize: '0.9em' }}>{errors.name}</p>}
           </label><br /><br />
 
           <label>Email:<br />
-            <input type="email" name="email" value={formData.email} onChange={handleChange} style={{ width: 'calc(100% - 10px)', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px' }} />
+            <input type="email" name="email" value={formData.email} onChange={handleChange} style={{ width: '100%', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }} />
             {errors.email && <p style={{ color: 'red', margin: '0 0 10px 0', fontSize: '0.9em' }}>{errors.email}</p>}
           </label><br /><br />
 
           <label>Phone Number:<br />
-            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} style={{ width: 'calc(100% - 10px)', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px' }} />
+            <input type="tel" name="phone" value={formData.phone} onChange={handleChange} style={{ width: '100%', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }} placeholder="e.g., 323-452-0178" />
             {errors.phone && <p style={{ color: 'red', margin: '0 0 10px 0', fontSize: '0.9em' }}>{errors.phone}</p>}
           </label><br /><br />
 
           <label>Message: <br />
-            <textarea name="message" rows="5" value={formData.message} onChange={handleChange} style={{ width: 'calc(100% - 10px)', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px' }}></textarea>
+            <textarea name="message" rows="5" value={formData.message} onChange={handleChange} style={{ width: '100%', padding: '8px', margin: '5px 0', border: '1px solid #ddd', borderRadius: '4px', boxSizing: 'border-box' }}></textarea>
             {errors.message && <p style={{ color: 'red', margin: '0 0 10px 0', fontSize: '0.9em' }}>{errors.message}</p>}
           </label><br /><br />
 
